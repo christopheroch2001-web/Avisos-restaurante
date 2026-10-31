@@ -1,0 +1,40 @@
+name: Crear APK Android
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar proyecto
+        uses: actions/checkout@v4
+
+      - name: Preparar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Preparar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Preparar Android
+        uses: android-actions/setup-android@v3
+
+      - name: Descomprimir proyecto
+        run: unzip -q Avisos_del_Restaurante_proyecto_android.zip
+
+      - name: Compilar aplicación
+        run: gradle -p AvisosDelRestaurante assembleDebug
+
+      - name: Guardar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Avisos-del-Restaurante-APK
+          path: AvisosDelRestaurante/app/build/outputs/apk/debug/app-debug.apk
